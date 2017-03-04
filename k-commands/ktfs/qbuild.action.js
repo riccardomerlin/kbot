@@ -1,58 +1,69 @@
-const common = require('../../common');
-const slackUtils = require('../../slack-utils');
+'use strict';
 
-const sendRequest = common.sendRequest;
-const log = common.log;
-const datetimeFormat = common.datetimeFormat;
-const slackDelayedResponse = slackUtils.delayedResponse
-const catchError = slackUtils.catchError;
+const common = require('../../common'),
+    slackUtils = require('../../slack-utils'),
+    tfsApi = require('../../tfs-api'),
+    db = require('../../db.connector'),
+
+    sendRequest = common.sendRequest,
+    log = common.log,
+    datetimeFormat = common.datetimeFormat,
+    slackDelayedResponse = slackUtils.delayedResponse,
+    catchError = slackUtils.catchError,
+    Exception = common.exception;
 
 module.exports = queueNewBuild;
 
 /**
  * Queue a new buil on Microsoft TFS.
- * @constructor
+ * 
  * @param {string} responseUri - uri of the Slack incoming hook to send the result of async operations
- * @param {array} params - An array of strings that contains builDefinitionId, projectName and branchName (optional).
+ * @param {string} userId - Slack user id.
+ * @param {object} params - on object that contains three parameters: id, project, branch.
  */
-function queueNewBuild(responseUri, params) {
-    /*  
-    params = id:7 project:rm.ilcenacolo branch:master
-    */
-    var buildDefinitionId = params.id;
-    var projectName = params.project;
-    var branchName = params.branch;
+function queueNewBuild(responseUri, userId, params) {
+    db.users.find({ username: userId }, function (err, users) {
+        try {
+            if (err || users.length < 1) {
+                log.error('User ' + userId + ' not registered.');
+                throw new Exception('User is not yet registered. Use `/ktfs register tfsToken:<value> tfsUser:<value>`', true);
+            }
 
-    try {
-        var payload = {
-            definition: {
-                id: buildDefinitionId
-            },
-            sourceBranch: branchName
-        };
+            let user = users[0];
+            const tfsCconnector = new tfsApi(process.env.TFSUrl, user.tfs.username, user.tfs.token);
 
-        var options = {
-            uri: 'https://' + process.env.TFSUrl + '/' + projectName + '/_apis/build/builds?api-version=2.0',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + process.env.TFSAccessToken
-            },
-            json: true,
-            body: payload
-        };
+            let project = tfsCconnector.createProject(params.project);
 
-        var promise = sendRequest(options, responseUri);
-        promise.then(tfsSuccess, tfsError);
-    } catch (e) {
-        catchError(e, responseUri);
-    }
+            let payload = {
+                definition: {
+                    id: params.id
+                },
+                sourceBranch: params.branch
+            };
+
+            let promise = project.queueNewBuild(payload);
+            promise.then(
+                (result) => { tfsSuccess(result, responseUri); },
+                (result) => { tfsError(result, responseUri); }
+            );
+        } catch (e) {
+            let message = e;
+            let display = false;
+            if (e instanceof Exception) {
+                message = e.message;
+                display = e.display;
+            }
+
+            catchError(message, responseUri, display);
+        }
+    });
 }
 
-function tfsSuccess(result) {
+function tfsSuccess(result, responseUri) {
     log.ok('New TFS build has been queued: Build ' + result.body.buildNumber + ', url' + result.body._links.web.href);
-    log.info('responseUri: ' + result.responseUri);
-    var body = {
+    log.info('responseUri: ' + responseUri);
+
+    let body = {
         'response_type': 'in_channel',
         'mrkdwn': true,
         'attachments': [
@@ -89,15 +100,14 @@ function tfsSuccess(result) {
         ]
     };
 
-    var options = {
-        uri: result.responseUri,
-        method: 'POST',
-        json: true,
+    let options = {
+        uri: responseUri,
         body: body
     };
+
     slackDelayedResponse(options);
 }
 
-function tfsError(data) {
-    catchError(data.error ? data.error : data.response.body.message, data.responseUri, data.error ? false : true)
+function tfsError(data, responseUri) {
+    catchError(data.error ? data.error : data.response.body.message, responseUri, data.error ? false : true)
 }

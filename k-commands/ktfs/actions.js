@@ -1,11 +1,32 @@
-const path = require('path');
-const qbuild = require( path.resolve(__dirname, './qbuild.action' ) );
+const path = require('path'),
+    qbuild = require(path.resolve(__dirname, './qbuild.action')),
+    register = require(path.resolve(__dirname, './register.action')),
+    userinfo = require(path.resolve(__dirname, './userinfo.action'));
 
 module.exports = {
-    'qbuild': {
+    'register': {
         id: 1,
+        description: 'Register you Slack user with TFS services.',
+        method: register,
+        params: {
+            tfsToken: '',
+            tfsUser: ''
+        }
+    },
+    'userinfo': {
+        id: 2,
+        description: 'Get registered user infos.',
+        method: userinfo,
+        params: {}
+    },
+    'qbuild': {
+        id: 3,
         description: 'Queue a new build on your TFS instance',
         method: qbuild,
-        params: { id: 0, project: '', branch: 'master' }
+        params: {
+            id: 0,
+            project: '',
+            branch: 'master'
+        }
     }
 };

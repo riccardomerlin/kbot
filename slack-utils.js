@@ -10,7 +10,7 @@ module.exports = {
 
 /**
  * Send a direct message to a Slack user channel
- * @constructor 
+ * 
  * @param {string} text - message content 
  * @param {string} slackRecipient - Slack recipient user, grouop or channel.
  */
@@ -39,6 +39,9 @@ function directMessage(text, slackRecipient) {
  * @param {object} options - JSON object with necessary parameters to complete the HTTP request 
  */
 function delayedResponse(options) {
+    options.json = options.json || true;
+    options.method = options.method || 'POST';
+    
     var promise = sendRequest(options);
     promise.then(slackSucces, slackError);
 
@@ -51,7 +54,7 @@ function delayedResponse(options) {
     }
 }
 
-function catchError(message, responseUri, returnException) {
+function catchError(message, responseUri, returnException, responseType) {
     log.error('Server Error: ' + message);
 
     var options = {
@@ -59,7 +62,7 @@ function catchError(message, responseUri, returnException) {
         method: 'POST',
         json: true,
         body: {
-            'response_type': 'in_channel',
+            'response_type': responseType || 'in_channel',
             'mrkdwn': true,
             'attachments': [
                 {

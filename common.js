@@ -1,8 +1,10 @@
-const request = require('request');
-const Promise = require('es6-promise').Promise;
-const moment = require('moment');
+'use strict';
 
-const datetimeFormat = 'YYYY-MM-DD, hh:mm:ss';
+const request = require('request'),
+    Promise = require('es6-promise').Promise,
+    moment = require('moment'),
+
+    datetimeFormat = 'YYYY-MM-DD, hh:mm:ss';
 
 module.exports = {
     sendRequest: sendRequest,
@@ -11,7 +13,8 @@ module.exports = {
         info: consoleLog,
         ok: consoleOk
     },
-    datetimeFormat: datetimeFormat
+    datetimeFormat: datetimeFormat,
+    exception: Exception
 };
 
 function sendRequest(options, responseUri) {
@@ -24,7 +27,8 @@ function sendRequest(options, responseUri) {
                 resolve({ body: body, responseUri: uri });
             }
             else {
-                reject({ error: error, response: response, responseUri: uri });
+                let message = error || 'HTTP ' + response.statusCode;
+                reject({ error: message, response: response, responseUri: uri });
             }
         }
     });
@@ -40,4 +44,9 @@ function consoleLog(message) {
 
 function consoleOk(message) {
     console.log(moment().format(datetimeFormat) + ' 200 OK - ' + message);
+}
+
+function Exception(message, display) {
+    this.message = message;
+    this.display = display;
 }
