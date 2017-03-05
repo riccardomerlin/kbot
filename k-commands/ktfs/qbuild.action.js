@@ -17,7 +17,7 @@ module.exports = queueNewBuild;
 /**
  * Queue a new buil on Microsoft TFS.
  * 
- * @param {string} responseUri - uri of the Slack incoming hook to send the result of async operations
+ * @param {string} responseUri - uri of the Slack incoming hook to which send the result of async operations.
  * @param {string} userId - Slack user id.
  * @param {object} params - on object that contains three parameters: id, project, branch.
  */
