@@ -1,16 +1,21 @@
+'use strict';
+
 // node modules requiring
-const path = require('path');
-const express = require('express');
-const bodyParser = require('body-parser');
-const http = require('http');
-const helmet = require('helmet');
+const path = require('path'),
+    express = require('express'),
+    bodyParser = require('body-parser'),
+    http = require('http'),
+    helmet = require('helmet'),
 
-// custom modules requiring
-const ktfsCommand = require('./k-commands/ktfs/ktfs.command');
-const common = require('./common');
+    // configuration
+    config = require('./config'),
 
-const log = common.log;
-const app = express();
+    // custom modules requiring
+    common = require('./common');
+
+// init
+const log = common.log,
+    app = express();
 
 // for parsing application/json
 app.use(bodyParser.json());
@@ -34,23 +39,14 @@ app.post('/slack/command-listener', function (req, res) {
         return;
     }
 
-    switch (req.body.command) {
-        case '/ktfs':
-            ktfsCommand(req.body.text, req.body.user_id, req.body.response_url);
-            break;
-        default:
-            break;
-    }
+    let command = config.commands[req.body.command];
+    let responseMessage = command(req.body.text, req.body.user_id, req.body.response_url);
 
-    res.send({
-        'response_type': req.body.text.indexOf('help') > -1
-            || req.body.text.indexOf('register') > -1
-            || req.body.text.indexOf('userinfo') > -1 ? 'ephemeral' : 'in_channel',
-        'text': ''
-    });
+    res.send(responseMessage);
 });
 
-var httpServer = http.createServer(app);
-httpServer.listen(process.env.PORT, function listening() {
-    console.log('kbot is listening on port %d', process.env.PORT);
+let httpServer = http.createServer(app);
+let port = process.env.PORT || 8080;
+httpServer.listen(port, function listening() {
+    console.log('kbot is listening on port %d', port);
 });

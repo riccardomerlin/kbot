@@ -19,7 +19,7 @@ function directMessage(text, slackRecipient) {
         token: process.env.slackAccessToken,
         channel: slackUserRecipient,
         text: text,
-        username: process.env.slackBotName,
+        username: process.env.slackBotName || 'kbot',
         as_user: true,
     };
 
