@@ -35,7 +35,7 @@ function directMessage(text, slackRecipient) {
 
 /**
  * Send a message back to the response URI provided by the Slack command
- * @constructor
+ * 
  * @param {object} options - JSON object with necessary parameters to complete the HTTP request 
  */
 function delayedResponse(options) {

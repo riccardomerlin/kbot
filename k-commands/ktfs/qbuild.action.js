@@ -22,14 +22,13 @@ module.exports = queueNewBuild;
  * @param {object} params - on object that contains three parameters: id, project, branch.
  */
 function queueNewBuild(responseUri, userId, params) {
-    db.users.find({ username: userId }, function (err, users) {
+    db.users.findOne({ username: userId }, function (err, user) {
         try {
-            if (err || users.length < 1) {
+            if (err || user === null) {
                 log.error('User ' + userId + ' not registered.');
                 throw new Exception('User is not yet registered. Use `/ktfs register tfsToken:<value> tfsUser:<value>`', true);
             }
 
-            let user = users[0];
             const tfsCconnector = new tfsApi(process.env.TFSUrl, user.tfs.username, user.tfs.token);
 
             let project = tfsCconnector.createProject(params.project);
