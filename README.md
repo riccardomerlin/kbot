@@ -73,8 +73,9 @@ To make `ktfs` command working set up the following environment
 variables on your local mchine:
 
 ```
-export slackCommandToken=<provided_slack_command_token>
-export TFSUrl=<your_tfs_instance_url>
+export SLACK_TEAM_ID=<provided_slack_team_id>
+export KTFS_CMD_TOKEN=<provided_slack_command_token>
+export TFS_URL=<your_tfs_instance_url>
 ```
 Run the bot
 ```
@@ -120,8 +121,9 @@ filed in the Slack slash command page with the url provided by Heroku app.
 
 Add environment variables on Heroku settings page
 ```
-slackCommandToken <provided_slack_command_token>
-TFSUrl <your_tfs_instance_url>
+SLACK_TEAM_ID <provided_slack_team_id>
+KTFS_CMD_TOKEN <provided_slack_command_token>
+TFS_URL <your_tfs_instance_url>
 ```
 
 Deploy code
