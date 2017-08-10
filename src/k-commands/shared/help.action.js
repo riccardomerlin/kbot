@@ -6,7 +6,7 @@ const actionUtil = require(path.resolve(__dirname, 'action.util'));
 module.exports = getHelpInfo;
 
 function getHelpInfo(responseUri, commandName, description, actions) {
-    var actionDescriptions = actionUtil.getHelpDescription(actions);
+    var actionDescriptions = actionUtil.getHelpDescription(actions, commandName);
 
     var body = {
         'mrkdwn': true,
