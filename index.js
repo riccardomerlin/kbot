@@ -31,16 +31,16 @@ app.get('/', function (req, res) {
 app.post('/slack/command-listener', function (req, res) {
     res.type('json');
 
-    if (req.body.token !== process.env.slackCommandToken) {
+    if (req.body.team_id !== process.env.SLACK_TEAM_ID) {
         res.status(403).json({
-            'response_type': 'in_channel',
-            'text': 'Sorry, you are not allowed to interact with this endpoint.'
+            'response_type': 'ephimeral',
+            'text': 'This team is not allowed to use kbot.'
         });
         return;
     }
 
     let command = config.commands[req.body.command];
-    let responseMessage = command(req.body.text, req.body.user_id, req.body.response_url);
+    let responseMessage = command(req.body);
 
     res.send(responseMessage);
 });
