@@ -29,7 +29,7 @@ function queueNewBuild(responseUri, userId, params) {
                 throw new Exception('User is not yet registered. Use `/ktfs register tfsToken:<value> tfsUser:<value>`', true);
             }
 
-            const tfsCconnector = new tfsApi(process.env.TFSUrl, user.tfs.username, user.tfs.token);
+            const tfsCconnector = new tfsApi(process.env.TFS_URL, user.tfs.username, user.tfs.token);
 
             let project = tfsCconnector.createProject(params.project);
 
