@@ -2,7 +2,7 @@
 
 const path = require('path'),
     common = require('../../common'),
-    actions = require(path.resolve(__dirname, './actions')),
+    actions = require(path.resolve(__dirname, './ktfs.actions')),
     help = require('../shared/help.action'),
     slackUtils = require('../../slack-utils'),
 
@@ -12,15 +12,21 @@ const path = require('path'),
 module.exports = ktfsCommand;
 
 /**
- * ktfs commands interpreter
+ * ktfs command interpreter
  * 
- * @param {string} text - text mesage sent from Slack
- * @param {string} Slack user id
- * @param {string} responseUri - uri of the Slack incoming hook to which send the result of async operations
+ * @param {json object} data - The request body from Slack
  */
-function ktfsCommand(text, userId, responseUri) {
+function ktfsCommand(data) {
+    if (data.token !== process.env.KTFS_CMD_TOKEN) {
+        log.error('Given token does not match the KTFS_CMD_TOKEN environment variable value.');
+        return {
+            'response_type': 'ephimeral',
+            'text': 'Sorry, ktfs command is not enabled on your installation.'
+        };
+    }
+
     var promise = new Promise(function (resolve, reject) {
-        processCommand(text, userId, responseUri, callback);
+        execAction(data.text, data.user_id, data.response_url, callback);
 
         function callback(error) {
             if (!error) {
@@ -35,9 +41,9 @@ function ktfsCommand(text, userId, responseUri) {
     promise.then(onResolve, onReject);
 
     return {
-        'response_type': text.indexOf('help') > -1
-            || text.indexOf('register') > -1
-            || text.indexOf('userinfo') > -1 ? 'ephemeral' : 'in_channel',
+        'response_type': data.text.indexOf('help') > -1
+            || data.text.indexOf('register') > -1
+            || data.text.indexOf('userinfo') > -1 ? 'ephemeral' : 'in_channel',
         'text': 'Request in progress...'
     };
 
@@ -50,7 +56,7 @@ function ktfsCommand(text, userId, responseUri) {
     }
 }
 
-function processCommand(text, userId, responseUri, callback) {
+function execAction(text, userId, responseUri, callback) {
     var paramsArray = text.split(' ');
     // get action name
     var actionName = paramsArray.shift();
@@ -80,6 +86,6 @@ function processCommand(text, userId, responseUri, callback) {
 
         action.method(responseUri, userId, params);
 
-        callback(null);
+        callback();
     }
 }
