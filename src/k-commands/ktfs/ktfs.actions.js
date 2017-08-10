@@ -4,7 +4,7 @@ const path = require('path'),
     userinfo = require(path.resolve(__dirname, './userinfo.action'));
 
 module.exports = {
-    'register': {
+    register: {
         id: 1,
         description: 'Register you Slack user with TFS services.',
         method: register,
@@ -13,13 +13,13 @@ module.exports = {
             tfsUser: ''
         }
     },
-    'userinfo': {
+    userinfo: {
         id: 2,
         description: 'Get registered user infos.',
         method: userinfo,
         params: {}
     },
-    'qbuild': {
+    qbuild: {
         id: 3,
         description: 'Queue a new build on your TFS instance',
         method: qbuild,
