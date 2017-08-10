@@ -208,3 +208,4 @@ out/
 launch.json
 server.*
 *.db
+*/___*
