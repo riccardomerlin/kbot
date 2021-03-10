@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "keywords": [
     "kbot",
@@ -20,15 +22,17 @@
   "author": "Riccardo Merlin",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "1.16.0",
+    "body-parser": "1.18.2",
     "es6-promise": "4.0.5",
-    "express": "4.14.0",
-    "helmet": "3.4.0",
-    "moment": "2.17.1",
+    "express": "4.16.0",
+    "helmet": "3.21.1",
+    "moment": "2.19.3",
     "nedb": "1.8.0",
-    "request": "2.79.0"
+    "request": "2.82.0",
+    "snyk": "^1.483.0"
   },
   "devDependencies": {
     "jest": "20.0.4"
-  }
+  },
+  "snyk": true
 }
