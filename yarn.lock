@@ -4886,7 +4886,7 @@ snyk-try-require@^2.0.0:
     lodash.clonedeep "^4.3.0"
     lru-cache "^5.1.1"
 
-snyk@1.483.0, snyk@^1.483.0:
+snyk@^1.483.0:
   version "1.483.0"
   resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.483.0.tgz#f6d145d2108614f6e08b877f467e979410afcfac"
   integrity sha512-rnvzOEktnqfAtifW9j7//GQBZug5d+yDc2N4FmwkkB2lMQx9X1imdCykIuhekpY5m137RmB+a7KFQYRyg4XkMA==
@@ -5727,8 +5727,9 @@ xtend@~4.0.1:
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
 y18n@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.1.tgz#6d15fba884c08679c0d77e88e7759e811e07fa41"
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.2.tgz#85c901bd6470ce71fc4bb723ad209b70f7f28696"
+  integrity sha512-uGZHXkHnhF0XeeAPgnKfPv1bgKAYyVvmNL1xlKsPYZPaIHxGti2hHqvOCQv71XMsLxu1QjergkqogUnms5D3YQ==
 
 yallist@^2.1.2:
   version "2.1.2"
