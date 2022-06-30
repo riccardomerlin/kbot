@@ -28,7 +28,7 @@
     "helmet": "3.21.1",
     "moment": "2.19.3",
     "nedb": "1.8.0",
-    "request": "2.82.0",
+    "request": "2.87.0",
     "snyk": "^1.518.0"
   },
   "devDependencies": {
